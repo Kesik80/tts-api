@@ -1,5 +1,5 @@
 // tts-widget.js — подключается одной строкой, делает всё сам
-// <script src="https://tts-api-hazel.vercel.app/tts-widget.js"></script>
+// <script src="https://tts-api-hazel.vercel.app/api/speak"></script>
 //
 // Минимальное использование:
 //   TTS.init({ repo: 'Kesik80/myproject' })
@@ -14,7 +14,7 @@
 
   // ── Конфиг (можно переопределить через TTS.init) ─────────────
   const CFG = {
-    apiUrl:       'https://tts-api-hazel.vercel.app/tts-widget.js',
+    apiUrl:       'https://tts-api-hazel.vercel.app/api/speak',
     repo:         'Kesik80/tts-api', // дефолтный репо — можно переопределить через TTS.init
     lang:         'de',
     defaultVoice: 'Roger',
