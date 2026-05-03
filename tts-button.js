@@ -6,7 +6,7 @@
 //   <tts-button text="die Sonne" voice="Laura" lang="de"></tts-button>
 //   <tts-button text="hello" voice="Roger" lang="en" label="Listen"></tts-button>
 
-const TTS_API_URL = 'https://YOUR-API.vercel.app/api/speak'; // ← заменить
+const TTS_API_URL = 'https://tts-api-hazel.vercel.app/api/speak'; // ← заменить
 
 const VOICES = {
   Roger: 'CwhRBWXzGAHq8TQ4Fs17', Laura: 'FGY2WhTYpPnrIDTdsKH5',
