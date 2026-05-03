@@ -297,6 +297,7 @@ main {
 }
 @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 </style>
+<script src="https://tts-api-kesik80.vercel.app/tts-widget.js"></script>
 </head>
 <body>
 
@@ -307,19 +308,8 @@ main {
   </div>
   <div class="voice-panel">
     <span class="voice-label">🔊 Голос:</span>
-    <select id="voice-select">
-      <option value="Roger">Roger · м</option>
-      <option value="Laura">Laura · ж</option>
-      <option value="Liam">Liam · м</option>
-      <option value="Matilda">Matilda · ж</option>
-      <option value="Will">Will · м</option>
-      <option value="Jessica">Jessica · ж</option>
-      <option value="Eric">Eric · м</option>
-      <option value="Brian">Brian · м</option>
-      <option value="Daniel">Daniel · м</option>
-      <option value="Lily">Lily · ж</option>
-      <option value="Bill">Bill · м</option>
-    </select>
+    <select id="voice-select"></select>
+    <!-- голоса заполняются автоматически через tts-widget.js -->
   </div>
 </header>
 
@@ -335,82 +325,8 @@ main {
 </div>
 
 <script>
-// ── TTS ──────────────────────────────────────────────────────
-const TTS_API = 'https://tts-api-kesik80.vercel.app/api/speak';
-const REPO    = 'Kesik80/tts-api';
-const VOICES  = {
-  Roger:'CwhRBWXzGAHq8TQ4Fs17', Laura:'FGY2WhTYpPnrIDTdsKH5',
-  Liam:'TX3LPaxmHKxFdv7VOQHJ',  Matilda:'XrExE9yKIg1WjnnlVkGX',
-  Will:'bIHbv24MWmeRgasZH58o',  Jessica:'cgSgspJ2msm6clMCkdW9',
-  Eric:'cjVigY5qzO86Huf0OWal',  Brian:'nPczCjzI2devNBz1zQrb',
-  Daniel:'onwK4e9ZLuTAKqWW03F9',Lily:'pFZP5JQG7iQjIQuC4Bku',
-  Bill:'pqHfZKP75CvOlQylNhV4',
-};
-const audioCache = {};
-let currentAudio = null;
-let currentBtn   = null;
-
-function getVoice() { return document.getElementById('voice-select').value; }
-
-function showStatus(msg) {
-  const bar = document.getElementById('status-bar');
-  document.getElementById('status-text').textContent = msg;
-  bar.classList.add('show');
-  clearTimeout(bar._t);
-  bar._t = setTimeout(() => bar.classList.remove('show'), 2500);
-}
-
-async function speak(text, btn) {
-  if (currentBtn) currentBtn.classList.remove('playing');
-  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-
-  const voice   = getVoice();
-  const voiceId = VOICES[voice];
-  const key     = `${voice}|${text}`;
-
-  if (btn) { btn.classList.add('loading'); btn.disabled = true; }
-
-  try {
-    let url = audioCache[key];
-    if (!url) {
-      showStatus(`Генерация · ${voice} · "${text.substring(0,30)}..."`);
-      const res = await fetch(TTS_API, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, voiceId, lang: 'de', repo: REPO }),
-      });
-      if (!res.ok) throw new Error(`API ${res.status}`);
-      const data = await res.json();
-      url = data.url;
-      audioCache[key] = url;
-      showStatus(data.cached ? `Кэш ✓ · ${voice}` : `Сгенерировано ✓ · ${voice}`);
-    } else {
-      showStatus(`Кэш ✓ · ${voice}`);
-    }
-
-    const audio = new Audio(url);
-    currentAudio = audio;
-    currentBtn   = btn;
-
-    if (btn) {
-      btn.classList.remove('loading');
-      btn.disabled = false;
-      btn.classList.add('playing');
-    }
-    audio.onended = () => { if (btn) btn.classList.remove('playing'); };
-    audio.onerror = () => { if (btn) btn.classList.remove('playing'); };
-    await audio.play();
-
-  } catch (err) {
-    if (btn) { btn.classList.remove('loading', 'playing'); btn.disabled = false; }
-    showStatus('Ошибка — переключение на Browser TTS');
-    if ('speechSynthesis' in window) {
-      const utt = new SpeechSynthesisUtterance(text);
-      utt.lang = 'de-DE'; utt.rate = 0.88;
-      window.speechSynthesis.speak(utt);
-    }
-  }
-}
+// ── TTS — 3 строки ───────────────────────────────────────────
+// tts-widget.js уже содержит все настройки
 
 // ── Данные ───────────────────────────────────────────────────
 const PRONOUNS = ['ich','du','er/sie/es','wir','ihr','sie/Sie'];
@@ -622,7 +538,7 @@ function buildUI() {
             <div class="form-row">
               <span class="pronoun">${pro}</span>
               <span class="form-de">${form}</span>
-              <button class="form-speak" onclick="speakBtn(this,'${fullText.replace(/'/g,"\\'")}')">🔊</button>
+              <button class="form-speak" data-tts="${fullText}">🔊</button>
             </div>`;
       });
 
@@ -632,7 +548,7 @@ function buildUI() {
               <div class="example-de">${tense.example.de}</div>
               <div class="example-ru">${tense.example.ru}</div>
             </div>
-            <button class="speak-btn" onclick="speakBtn(this,'${tense.example.de.replace(/'/g,"\\'")}')">🔊</button>
+            <button class="speak-btn" data-tts="${tense.example.de}">🔊</button>
           </div>
         </div>`;
     });
@@ -650,11 +566,11 @@ function showVerb(id) {
     p.classList.toggle('active', p.id === 'verb-' + id));
 }
 
-function speakBtn(btn, text) {
-  speak(text, btn);
-}
+
 
 buildUI();
+// Навешиваем озвучку на все кнопки одной строкой
+TTS.attachTo('[data-tts]');
 </script>
 </body>
 </html>
