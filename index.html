@@ -569,8 +569,11 @@ function showVerb(id) {
 
 
 buildUI();
-// Навешиваем озвучку на все кнопки одной строкой
+// Инициализируем TTS (заполнит voice-select и настроит API)
+TTS.init();
+// Навешиваем озвучку на все кнопки
 TTS.attachTo('[data-tts]');
+
 </script>
 <script src="console.js"></script>
 </body>
