@@ -1,5 +1,5 @@
 // tts-widget.js — подключается одной строкой, делает всё сам
-// <script src="https://tts-api-kesik80.vercel.app/tts-widget.js"></script>
+// <script src="https://tts-api-hazel.vercel.app/tts-widget.js"></script>
 //
 // Минимальное использование:
 //   TTS.init({ repo: 'Kesik80/myproject' })
