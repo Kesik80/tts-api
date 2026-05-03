@@ -14,7 +14,7 @@
 
   // ── Конфиг (можно переопределить через TTS.init) ─────────────
   const CFG = {
-    apiUrl:       'https://tts-api-kesik80.vercel.app/api/speak',
+    apiUrl:       'https://tts-api-hazel.vercel.app/tts-widget.js',
     repo:         'Kesik80/tts-api', // дефолтный репо — можно переопределить через TTS.init
     lang:         'de',
     defaultVoice: 'Roger',
